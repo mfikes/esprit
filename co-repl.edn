@@ -1,0 +1,3 @@
+{:optimizations :simple
+ :target        :none
+ :process-shim  false}

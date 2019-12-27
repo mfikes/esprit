@@ -1,0 +1,3 @@
+{:deps {org.clojure/clojurescript {:mvn/version "1.10.597"}}
+ :aliases {:make-repl {:main-opts ["-m" "cljs.main" "-co" "co-repl.edn" "-c" "esprit.repl"]}
+           :make-rom {:main-opts [ "-m" "esprit.make-rom"]}}}
