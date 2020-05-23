@@ -1,1 +1,4 @@
 /out
+/target
+/pom.xml.asc
+/pom.xml

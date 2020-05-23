@@ -22,4 +22,4 @@
       (.write os (.getBytes ".bootcde"))
       (.write os (.getBytes main-js)))
     (println "ROM created; you can flash it to your ESP32 by executing the following:")
-    (println "esptool.py --chip esp32 --port <PORT> write_flash 0x2C0000 out/main.bin")))
+    (println "esptool.py --port <PORT> write_flash 0x2C0000 out/main.bin")))
