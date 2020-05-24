@@ -1,109 +1,16 @@
 (ns esprit.repl
-  (:require [clojure.string :as string]
-            [clojure.java.io :as io]
-            [cljs.analyzer :as ana]
-            [cljs.util :as util]
-            [cljs.compiler :as comp]
-            [cljs.repl :as repl]
-            [cljs.closure :as closure]
-            [clojure.data.json :as json])
-  (:import java.net.Socket
-           java.lang.StringBuilder
-           [java.io File BufferedReader BufferedWriter IOException]
-           (javax.jmdns JmDNS ServiceListener)
-           (java.net URI InetAddress NetworkInterface Inet4Address)))
-
-(defn- substring-exists?
-  "Gets whether a substring exists in a string."
-  [s sub]
-  (not (neg? (.indexOf s sub))))
-
-(defn getOs
-  "Returns a keyword that represents the OS."
-  []
-  (let [os-name (.toLowerCase (System/getProperty "os.name"))]
-    (cond
-      (substring-exists? os-name "mac") :mac
-      (substring-exists? os-name "win") :win
-      (substring-exists? os-name "linux") :linux
-      :else :unknown)))
-
-(defn sh
-  "Executes a shell process. Allows up to timeout to complete, returning process
-  exit code or process output. Otherwise forcibly terminates process and returns
-  timeout-return-value."
-  [timeout timeout-return-value return-output? & args]
-  {:pre [(number? timeout) (every? string? args)]}
-  (let [process (.exec (Runtime/getRuntime) (string/join " " args))]
-    (loop [time-remaining timeout]
-      (Thread/sleep 100)
-      (or
-        (try
-          (let [exit-value (.exitValue process)]
-            (if return-output?
-              (let [input-stream (.getInputStream process)
-                    output (slurp input-stream)]
-                (.close input-stream)
-                output)
-              exit-value))
-          (catch IllegalThreadStateException _
-            nil))
-        (if (pos? time-remaining)
-          (recur (- time-remaining 100))
-          (do
-            (.destroy process)
-            timeout-return-value))))))
-
-(defn- ip-address->inet-addr
-  "Take a string representation of an IP address and returns a Java InetAddress
-  instance, or nil if the conversion couldn't be completed."
-  [ip-address]
-  {:pre  [(string? ip-address)]
-   :post [(or (nil? %) (instance? InetAddress %))]}
-  (try
-    (InetAddress/getByName ip-address)
-    (catch Throwable _
-      nil)))
-
-(defn local?
-  "Takes an IP address and returns a truthy value iff the address is local
-  to the machine running this code."
-  [ip-address]
-  {:pre [(or (nil? ip-address) (string? ip-address))]}
-  (some-> ip-address
-    ip-address->inet-addr
-    NetworkInterface/getByInetAddress))
-
-(defn address-type
-  "Takes an IP address and returns a keyword in #{:ipv4 :ipv6}
-  indicating the type of the address, or nil if the type could not
-  be determined"
-  [ip-address]
-  {:pre  [(string? ip-address)]
-   :post [(or (nil? %) (#{:ipv4 :ipv6} %))]}
-  (if-let [inet-address (ip-address->inet-addr ip-address)]
-    (if (instance? Inet4Address inet-address)
-      :ipv4
-      :ipv6)))
-
-(defn address-type->localhost-address
-  "Given an address type, returns the localhost address."
-  [address-type]
-  {:pre [(#{:ipv4 :ipv6} address-type)]
-   :post [(string? %)]}
-  (address-type {:ipv4 "127.0.0.1" :ipv6 "::1"}))
-
-(defn- local-address-if
-  "Takes an IP address and returns the localhost address if the
-  address happens to be local to this machine."
-  [ip-address]
-  {:pre  [(string? ip-address)]
-   :post [(string? %)]}
-  (if (local? ip-address)
-    (-> ip-address
-      address-type
-      address-type->localhost-address)
-    ip-address))
+  (:require
+    [clojure.string :as string]
+    [clojure.java.io :as io]
+    [cljs.compiler :as comp]
+    [cljs.repl :as repl]
+    [clojure.data.json :as json])
+  (:import
+    (java.net Socket)
+    (java.lang StringBuilder)
+    (java.io BufferedReader BufferedWriter IOException)
+    (javax.jmdns JmDNS ServiceListener)
+    (java.net URI)))
 
 (defn set-logging-level [logger-name level]
   "Sets the logging level for a logger to a level."
@@ -132,8 +39,7 @@
   {:pre [(map? name-endpoint-map)]}
   (map vector
     (iterate inc 1)
-    (sort-by (juxt (comp (complement local?) :address second) first)
-      name-endpoint-map)))
+    (sort-by first name-endpoint-map)))
 
 (defn print-discovered-devices [name-endpoint-map opts]
   "Prints the set of discovered devices given a name endpoint map."
@@ -173,7 +79,7 @@
       (.close mdns-service))))
 
 (defn discover-and-choose-device
-  "Looks for Esprit WebDAV devices advertised via Bonjour and presents
+  "Looks for Esprit devices advertised via Bonjour and presents
   a simple command-line UI letting user pick one, unless
   choose-first-discovered? is set to true in which case the UI is bypassed"
   [choose-first-discovered? opts]
@@ -310,7 +216,7 @@
              :column   nil}))))))
 
 (defn raw-stacktrace->canonical-stacktrace
-  "Parse a raw JSC stack representation, parsing it into stack frames.
+  "Parse a raw Espruino stack representation, parsing it into stack frames.
   The canonical stacktrace must be a vector of maps of the form
   {:file <string> :function <string> :line <integer> :column <integer>}."
   [raw-stacktrace opts]
@@ -327,8 +233,8 @@
   {:status :error
    :value "Not connected."})
 
-(defn jsc-eval
-  "Evaluate a JavaScript string in the JSC REPL process."
+(defn esprit-eval
+  "Evaluate a JavaScript string in the Espruino REPL process."
   [repl-env js]
   {:pre [(map? repl-env) (string? js)]}
   (let [{:keys [out]} @(:socket repl-env)
@@ -350,147 +256,10 @@
       not-conected-result)))
 
 (defn load-javascript
-  "Load a Closure JavaScript file into the JSC REPL process."
+  "Load a Closure JavaScript file into the Espruino REPL process."
   [repl-env provides url]
-  (jsc-eval repl-env
+  (esprit-eval repl-env
     (str "goog.require('" (comp/munge (first provides)) "')")))
-
-(defn form-ambly-import-script-expr-js
-  "Takes a JavaScript path expression and forms an `AMBLY_IMPORT_SCRIPT` command."
-  [path-expr]
-  {:pre [(string? path-expr)]}
-  (str "AMBLY_IMPORT_SCRIPT(" path-expr ");"))
-
-(defn form-ambly-import-script-path-js
-  "Takes a path and forms a JavaScript `AMBLY_IMPORT_SCRIPT` command."
-  [path]
-  {:pre [(string? path)]}
-  (form-ambly-import-script-expr-js (str "'" path "'")))
-
-(defn- mount-exists?
-  "Checks to see if a WebDAV mount point already exists."
-  [webdav-mount-point]
-  {:pre [(string? webdav-mount-point)]}
-  ;; We fall back to `.canRead` to cope with mount points where `.exists` returns false and
-  ;; for command-line tools indicate `Operation timed out`.
-  (let [file (io/file webdav-mount-point)]
-    (or (.exists file) (.canRead file))))
-
-(defmulti umount-webdav
-  "Unmounts WebDAV, returning true upon success."
-  (fn [os webdav-mount-point] os))
-
-(defmethod umount-webdav :mac
-  [os webdav-mount-point]
-  {:pre [(keyword? os) (string? webdav-mount-point)]}
-  (or
-    (not (mount-exists? webdav-mount-point))
-    (or
-      (zero? (sh 5000 -1 false "umount" webdav-mount-point))
-      (zero? (sh 5000 -1 false "umount" "-f" webdav-mount-point))
-      (zero? (sh 1000 -1 false "rmdir" webdav-mount-point)))))
-
-(defmethod umount-webdav :win
-  [os webdav-mount-point]
-  {:pre [(keyword? os) (string? webdav-mount-point)]}
-  (zero? (sh 5000 -1 false "net" "use" webdav-mount-point "/delete")))
-
-(defmethod umount-webdav :linux
-  [os webdav-mount-point]
-  {:pre [(string? webdav-mount-point)]}
-  (umount-webdav :unknown webdav-mount-point))
-
-(defmethod umount-webdav :unknown
-  [os webdav-mount-point]
-  {:pre [(string? webdav-mount-point)]}
-  (println "\nPlease manually unmount" webdav-mount-point)
-  true)
-
-(defn create-http-url
-  "Takes an address and port and forms a URL."
-  [address port]
-  (let [wrapped-address (if (= :ipv6 (address-type address))
-                          (str "[" address "]")
-                          address)]
-    (str "http://" wrapped-address ":" port)))
-
-(defmulti mount-webdav
-  "Mounts WebDAV, returning the filesystem mount point,
-  otherwise throwing upon failure."
-  (fn [os bonjour-name endpoint-address endpoint-port] os))
-
-(defmethod mount-webdav :mac
-  [os bonjour-name endpoint-address endpoint-port]
-  {:pre [(keyword? os) (esprit-bonjour-name? bonjour-name)
-         (string? endpoint-address) (number? endpoint-port)]}
-  (let [webdav-endpoint (create-http-url endpoint-address endpoint-port)
-        webdav-mount-point (str "/tmp/Esprit-" (format "%08X" (hash webdav-endpoint)))
-        output-dir (io/file webdav-mount-point)]
-    (when-not (umount-webdav os webdav-mount-point)
-      (throw (IOException. (str "Unable to unmount previous WebDAV mount at " webdav-mount-point))))
-    (loop [tries 1]
-      (if-not (or (mount-exists? webdav-mount-point) (.mkdirs output-dir))
-        (throw (IOException. (str "Unable to create WebDAV mount point " webdav-mount-point))))
-      (if (zero? (sh 1000 -1 false "mount_webdav" webdav-endpoint webdav-mount-point))
-        webdav-mount-point
-        (if (= 4 tries)
-          (throw (IOException. (str "Unable to mount WebDAV at " webdav-endpoint)))
-          (do
-            (umount-webdav os webdav-mount-point)
-            (Thread/sleep (* tries 500))
-            (recur (inc tries))))))))
-
-(defn extract-drive-letter
-  "Takes the output from `net use ...` command and extracts
-  the assigned drive letter."
-  [output]
-  (str (second (re-matches #"Drive ([A-Z]?): is now connected to" output)) ":"))
-
-(defmethod mount-webdav :win
-  [os bonjour-name endpoint-address endpoint-port]
-  {:pre [(keyword? os) (esprit-bonjour-name? bonjour-name)
-         (string? endpoint-address) (number? endpoint-port)]}
-  (let [webdav-endpoint (create-http-url endpoint-address endpoint-port)
-        shell-result (sh 30000 "" true "net" "use" "*" webdav-endpoint)]
-   (or
-     (extract-drive-letter (subs shell-result 0 (min 28 (count shell-result))))
-     (throw (IOException. shell-result)))))
-
-(defmethod mount-webdav :linux
-  [os bonjour-name endpoint-address endpoint-port]
-  {:pre [(keyword? os) (esprit-bonjour-name? bonjour-name)
-         (string? endpoint-address) (number? endpoint-port)]}
-  (let [webdav-endpoint (create-http-url endpoint-address endpoint-port)]
-    (println)
-    (println "   mount.davfs instructions")
-    (println "   ------------------------")
-    (println)
-    (println "   mount.davfs can be used to mount the device's WebDAV")
-    (println "   directory. First create a mount point:")
-    (println)
-    (println "     sudo mkdir /mnt/esprit")
-    (println)
-    (println "   Create a configuration that turns off delayed upload:")
-    (println)
-    (println "     echo \"delay_upload 0\" > davfs2.conf")
-    (println)
-    (println "   Then mount the directory, specifying the config file.")
-    (println "   (When prompted, hit enter for username/password):")
-    (println)
-    (println "     sudo mount.davfs -o uid=$UID,conf=davfs2.conf \\")
-    (println "    " webdav-endpoint "/mnt/esprit")
-    (println)
-    (mount-webdav :unknown bonjour-name endpoint-address endpoint-port)))
-
-(defmethod mount-webdav :unknown
-  [os bonjour-name endpoint-address endpoint-port]
-  {:pre [(keyword? os) (esprit-bonjour-name? bonjour-name)
-         (string? endpoint-address) (number? endpoint-port)]}
-  (let [webdav-endpoint (create-http-url endpoint-address endpoint-port)]
-    (println "Please manually mount" webdav-endpoint "and when done, enter")
-    (print "filesystem mount directory: ")
-    (flush)
-    (read-line)))
 
 (defn- set-up-socket
   [repl-env opts address port]
@@ -504,12 +273,8 @@
 
 (defn tear-down
   [repl-env]
-  (when-let [webdav-mount-point @(:webdav-mount-point repl-env)]
-    (umount-webdav (getOs) webdav-mount-point))
   (when-let [socket @(:socket repl-env)]
     (close-socket socket)))
-
-;; dns-sd -P "Ambly ESP32 WROVER" _http._tcp local 53001 ambly.local 10.0.1.61
 
 (defn setup
   [repl-env opts]
@@ -517,86 +282,11 @@
   (try
     (let [_ (set-logging-level "javax.jmdns" java.util.logging.Level/OFF)
           [bonjour-name endpoint] (discover-and-choose-device (:choose-first-discovered (:options repl-env)) opts)
-          endpoint-address (local-address-if (:address endpoint))
-          endpoint-port (:port endpoint)
-          _ (reset! (:bonjour-name repl-env) bonjour-name)
-          webdav-mount-point "/tmp/ESPRIT-FAKEMOUNT" #_(mount-webdav (getOs) bonjour-name endpoint-address endpoint-port)
-          _ (reset! (:webdav-mount-point repl-env) webdav-mount-point)
-          output-dir (io/file webdav-mount-point)
-          env (ana/empty-env)
-          core (io/resource "cljs/core.cljs")]
+          endpoint-address (:address endpoint)
+          endpoint-port (:port endpoint)]
       (println (str "\nConnecting to " (bonjour-name->display-name bonjour-name) " ...\n"))
       (set-up-socket repl-env opts endpoint-address (dec endpoint-port))
-      (if (= "true" (:value (jsc-eval repl-env "typeof cljs === 'undefined'")))
-        #_(do
-          ;; compile cljs.core & its dependencies, goog/base.js must be available
-          ;; for bootstrap to load, use new closure/compile as it can handle
-          ;; resources in JARs
-          (let [core-js (closure/compile core
-                          (assoc opts
-                            :output-dir webdav-mount-point
-                            :output-file (io/file "cljs" "core.js")))
-                deps (closure/add-dependencies opts core-js)]
-            ;; output unoptimized code and the deps file
-            ;; for all compiled namespaces
-            (apply closure/output-unoptimized
-              (assoc opts
-                :output-dir webdav-mount-point
-                :output-to (.getPath (io/file output-dir "ambly_repl_deps.js")))
-              deps))
-          ;; Set up CLOSURE_IMPORT_SCRIPT function, injecting path
-          (jsc-eval repl-env
-            (str "CLOSURE_IMPORT_SCRIPT = function(src) {"
-              (form-ambly-import-script-expr-js
-                "'goog/' + src")
-              "return true; };"))
-          ;; bootstrap
-          (jsc-eval repl-env
-            (form-ambly-import-script-path-js "goog/base.js"))
-          ;; load the deps file so we can goog.require cljs.core etc.
-          (jsc-eval repl-env
-            (form-ambly-import-script-path-js "ambly_repl_deps.js"))
-          ;; monkey-patch isProvided_ to avoid useless warnings - David
-          (jsc-eval repl-env
-            (str "goog.isProvided_ = function(x) { return false; };"))
-          ;; monkey-patch goog.require, skip all the loaded checks
-          (repl/evaluate-form repl-env env "<cljs repl>"
-            '(set! (.-require js/goog)
-               (fn [name]
-                 (js/CLOSURE_IMPORT_SCRIPT
-                   (if (some? goog/debugLoader_)
-                     (.getPathFromDeps_ goog/debugLoader_ name)
-                     (js* "~{}[~{}]" (.. js/goog -dependencies_ -nameToPath) name))))))
-          ;; load cljs.core, setup printing
-          (repl/evaluate-form repl-env env "<cljs repl>"
-            '(do
-               (.require js/goog "cljs.core")
-               (set-print-fn! js/AMBLY_PRINT_FN)
-               (set-print-err-fn! js/AMBLY_PRINT_FN)))
-          ;; redef goog.require to track loaded libs
-          (repl/evaluate-form repl-env env "<cljs repl>"
-            '(do
-               (set! *loaded-libs* #{"cljs.core"})
-               (set! (.-require js/goog)
-                 (fn [name reload]
-                   (when (or (not (contains? *loaded-libs* name)) reload)
-                     (set! *loaded-libs* (conj (or *loaded-libs* #{}) name))
-                     (js/CLOSURE_IMPORT_SCRIPT
-                       (if (some? goog/debugLoader_)
-                         (.getPathFromDeps_ goog/debugLoader_ name)
-                         (js* "~{}[~{}]" (.. js/goog -dependencies_ -nameToPath) name)))))))))
-        (let [expected-clojurescript-version (cljs.util/clojurescript-version)
-              actual-clojurescript-version (:value (jsc-eval repl-env "cljs.core._STAR_clojurescript_version_STAR_"))]
-          #_(when (and (some? actual-clojurescript-version)
-                     (not= expected-clojurescript-version actual-clojurescript-version))
-            (println
-              (str "WARNING: " (bonjour-name->display-name bonjour-name)
-                "\n         is running ClojureScript " actual-clojurescript-version
-                ", while the Ambly REPL is\n         set up to use ClojureScript "
-                expected-clojurescript-version ".\n")))))
-      #_(repl/evaluate-form repl-env env "<cljs repl>"
-        '(set! *print-newline* true))
-      {:merge-opts {:output-dir webdav-mount-point}})
+      {})
     (catch Throwable t
       (tear-down repl-env)
       (throw t))))
@@ -624,7 +314,7 @@
           (str "\t" (when function (str function " "))
             "(" (source url file) (when line (str ":" line)) (when column (str ":" column)) ")\n"))))))
 
-(defrecord JscEnv [response-promise bonjour-name webdav-mount-point socket options]
+(defrecord EspritEnv [response-promise bonjour-name webdav-mount-point socket options]
   repl/IReplEnvOptions
   (-repl-options [this]
     {:require-foreign true})
@@ -642,7 +332,7 @@
   (-setup [repl-env opts]
     (setup repl-env opts))
   (-evaluate [repl-env _ _ js]
-    (jsc-eval repl-env js))
+    (esprit-eval repl-env js))
   (-load [repl-env provides url]
     (load-javascript repl-env provides url))
   (-tear-down [repl-env]
@@ -651,7 +341,7 @@
 (defn repl-env*
   [options]
   {:pre [(or (nil? options) (map? options))]}
-  (JscEnv. (atom nil) (atom nil) (atom nil) (atom nil) (or options {})))
+  (->EspritEnv (atom nil) (atom nil) (atom nil) (atom nil) (or options {})))
 
 (defn repl-env
   "Esprit REPL environment."
