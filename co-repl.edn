@@ -1,3 +1,4 @@
 {:optimizations :simple
  :target        :none
+ :browser-repl  false
  :process-shim  false}
