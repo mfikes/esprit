@@ -1,23 +1,22 @@
 # Esprit
-
 This repository contains work in progress for support for ClojureScript on the ESP32 WROVER using Espruino.
 
-## Prerequisite 
+## Prerequisite
 Set up an ESP32 WROVER with partitions and expanded JSVar space (below modeled per [this gist][1]).
-
 We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`.
 
 	esptool.py --port /dev/cu.SLAB_USBtoUART erase_flash
 
 Download bootloader, partitions, and Espruino engine:
+
 - [`bootloader.bin`][2]
 - [`partitions_espruino.bin`][3]
-- [`espruino_esp32.bin`][4]
+- [`espruino_esp32.bin`][4]	
 
-	esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x1000 bootloader.bin 0x8000 partitions_espruino.bin 0x10000 espruino_esp32.bin
+Then flash via
 
+	esptool.py --port /dev/cu.SLAB\_USBtoUART --baud 2000000 write\_flash 0x1000 bootloader.bin 0x8000 partitions\_espruino.bin 0x10000 espruino\_esp32.bin
 ## REPL
-
 To make a ClojureScript ROM capable of running a REPL, first compile the ClojureScript via
 
 	clj -A:make-repl
@@ -30,9 +29,11 @@ You can then flash this ROM to your ESP32 via
 
 	esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x2C0000 out/main.bin
 
-To establish a REPL into the ESP32, first connect to it using USB / serial and set it up so that it joins WiFi.  
+To establish a REPL into the ESP32, first connect to it using USB / serial and set it up so that it joins WiFi.
 
 	screen /dev/cu.SLAB_USBtoUART 115200
+
+Hit return to get a prompt (it can take about 15 seconds to load the ClojureScript runtime) and then configure the device to your WiFi network:
 
 	var ssid = 'YOUR_SSID';
 	var password = 'YOUR_SSID_PASSWORD';
@@ -43,12 +44,11 @@ To establish a REPL into the ESP32, first connect to it using USB / serial and s
 	    wifi.save(); // Next reboot will auto-connect
 	});
   
-Once connected to WiFi, it will print a message like the following to the serial port like
-
+Once connected to WiFi, it will print a message like the following to the serial port like:
 
 	Ready for REPL Connections
 	Ensure this ESP32's REPL is being advertised via MDNS. For example, on macOS:
-	dns-sd -P "Ambly ESP32 WROVER" _http._tcp local 53001 ambly.local 10.0.1.21
+	dns-sd -P "Esprit ESP32 WROVER" _http._tcp local 53001 esprit.local 10.0.1.21
 
 As indicated, manually advertise it via MDNS, and then connect to it using Esprit
 
