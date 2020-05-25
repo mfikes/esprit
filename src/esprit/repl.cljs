@@ -56,5 +56,11 @@
 
 (.on wifi "connected" #(start-server 53000))
 
+(goog-define wifi-ssid "")
+(goog-define wifi-password "")
+
+(when (seq wifi-ssid)
+  (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
+
 ;; workaround a bug where last form doesn't seem to be evaluated
 (def ^:private dummy 3)
