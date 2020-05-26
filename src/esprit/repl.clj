@@ -174,61 +174,6 @@
           (when-not (.isClosed (:socket @(:socket repl-env)))
             (.printStackTrace e)))))))
 
-(defn source-uri->relative-path
-  "Takes a source URI and returns a relative path value suitable for inclusion
-  in a canonical stack frame."
-  [source-uri]
-  {:pre [(string? source-uri)]}
-  (let [uri (URI. source-uri)
-        uri-scheme (.getScheme uri)]
-    (case uri-scheme
-      "file" (let [uri-path (.getPath uri)]
-               (if (.startsWith uri-path "/")
-                 (subs uri-path 1)
-                 uri-path))
-      (str "<" source-uri ">"))))
-
-(defn stack-line->canonical-frame
-  "Parses a stack line into a frame representation, returning nil
-  if parse failed."
-  [stack-line]
-  {:pre  [(string? stack-line)]}
-  (let [[function source-uri line column]
-        (rest (re-matches #"(.*)@(.*):([0-9]+):([0-9]+)"
-                stack-line))]
-    (if (and source-uri function line column)
-      {:file     (source-uri->relative-path source-uri)
-       :function function
-       :line     (Long/parseLong line)
-       :column   (Long/parseLong column)}
-      (let [[source-uri line column]
-            (rest (re-matches #"(.*):([0-9]+):([0-9]+)"
-                              stack-line))]
-        (if (and source-uri line column)
-          {:file     (source-uri->relative-path source-uri)
-           :function nil
-           :line     (Long/parseLong line)
-           :column   (Long/parseLong column)}
-          (when-not (string/blank? stack-line)
-            {:file     nil
-             :function (string/trim stack-line)
-             :line     nil
-             :column   nil}))))))
-
-(defn raw-stacktrace->canonical-stacktrace
-  "Parse a raw Espruino stack representation, parsing it into stack frames.
-  The canonical stacktrace must be a vector of maps of the form
-  {:file <string> :function <string> :line <integer> :column <integer>}."
-  [raw-stacktrace opts]
-  {:pre  [(string? raw-stacktrace) (map? opts)]
-   :post [(vector? %)]}
-  (let [stack-line->canonical-frame (memoize stack-line->canonical-frame)]
-    (->> raw-stacktrace
-         string/split-lines
-         (map stack-line->canonical-frame)
-         (remove nil?)
-         vec)))
-
 (def not-conected-result
   {:status :error
    :value "Not connected."})
@@ -293,43 +238,10 @@
       (tear-down repl-env)
       (throw t))))
 
-(defn stacktrace->display-string
-  "Takes a stacktrace and forms a display string, consulting a mapped stacktrace
-  and the output directory"
-  [stacktrace mapped-stacktrace output-dir]
-  {:pre [(vector? stacktrace) (vector? mapped-stacktrace) (string? output-dir)]
-   :post [(string? %)]}
-  (let [source (fn [url file]
-                 (if file
-                   (let [file-path (str file)]
-                     (if (.startsWith file-path output-dir)
-                       (subs file-path (inc (count output-dir)))
-                       file-path))
-                   (str url)))]
-    (apply str
-      (for [{:keys [function file url line column]}
-            (map #(merge-with (fn [a b] (or a b)) %1 %2)
-              mapped-stacktrace
-              stacktrace)]
-        (let [url (when url (string/trim (.toString url)))
-              file (when file (string/trim (.toString file)))]
-          (str "\t" (when function (str function " "))
-            "(" (source url file) (when line (str ":" line)) (when column (str ":" column)) ")\n"))))))
-
 (defrecord EspritEnv [response-promise bonjour-name webdav-mount-point socket options]
   repl/IReplEnvOptions
   (-repl-options [this]
     {:require-foreign true})
-  repl/IParseStacktrace
-  (-parse-stacktrace [_ stacktrace _ build-options]
-    (raw-stacktrace->canonical-stacktrace stacktrace build-options))
-  repl/IPrintStacktrace
-  (-print-stacktrace [_ stacktrace _ build-options]
-    (print
-      (stacktrace->display-string
-        stacktrace
-        (repl/mapped-stacktrace stacktrace build-options)
-        @webdav-mount-point)))
   repl/IJavaScriptEnv
   (-setup [repl-env opts]
     (setup repl-env opts))
