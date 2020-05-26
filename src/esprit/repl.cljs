@@ -2,6 +2,13 @@
   (:require
     [clojure.string :as string]))
 
+(def connections (atom 0))
+
+(defn indicate
+  [connections]
+  (.write js/D21 (zero? connections))
+  nil)
+
 (def ^:private net (js/require "net"))
 
 (def ^:private wifi (js/require "Wifi"))
@@ -13,6 +20,11 @@
 
 (defn- handle-repl-connection [c]
   (.log js/console "New REPL Connection")
+  (indicate (swap! connections inc))
+  (.on c "close"
+    (fn []
+      (.log js/console "REPL disconnected")
+      (indicate (swap! connections dec))))
   (let [buffer (atom "")]
     (.on c "data"
       (fn [data]
