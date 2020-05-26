@@ -1,5 +1,6 @@
 (ns esprit.repl
   (:require
+    [goog.object :as gobj]
     [clojure.string :as string]))
 
 (def connections (atom 0))
@@ -14,9 +15,12 @@
 (def ^:private wifi (js/require "Wifi"))
 
 (defn- write [c o]
+  ;; Turn off "eval"
+  (.write js/D22 true)
   (doto c
     (.write (.stringify js/JSON o))
-    (.write "\0")))
+    (.write "\0"))
+  (js/digitalPulse js/D23 true #js [100 100]))
 
 (defn- handle-repl-connection [c]
   (.log js/console "New REPL Connection")
@@ -35,6 +39,8 @@
             (cond
               (string/starts-with? data "(function (){try{return cljs.core.pr_str")
               (let [response (try
+                               ;; Indicate "eval"
+                               (js/analogWrite js/D22, 0.2 #js {:freq 2})
                                #js {:status "success"
                                     :value  (js/eval data)}
                                (catch :default ex
@@ -62,6 +68,7 @@
 
 (defn- start-server [port]
   (.log js/console "Ready for REPL Connections")
+  (indicate 0)
   (prompt-dns-sd)
   (ensure-cljs-user)
   (.listen server port))
@@ -72,6 +79,7 @@
 (goog-define wifi-password "")
 
 (when (seq wifi-ssid)
+  (js/analogWrite js/D21, 0.8 #js {:freq 5})
   (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
 
 ;; workaround a bug where last form doesn't seem to be evaluated
