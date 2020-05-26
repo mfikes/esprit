@@ -3,6 +3,8 @@
     [goog.object :as gobj]
     [clojure.string :as string]))
 
+(.write js/D22 true)
+
 (def connections (atom 0))
 
 (defn indicate
@@ -78,9 +80,11 @@
 (goog-define wifi-ssid "")
 (goog-define wifi-password "")
 
-(when (seq wifi-ssid)
-  (js/analogWrite js/D21, 0.8 #js {:freq 5})
-  (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
+(if (seq wifi-ssid)
+  (do
+    (js/analogWrite js/D21, 0.5 #js {:freq 120})
+    (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
+  (js/analogWrite js/D21, 0.5 #js {:freq 2}))
 
 ;; workaround a bug where last form doesn't seem to be evaluated
 (def ^:private dummy 3)
