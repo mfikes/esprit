@@ -1,36 +1,30 @@
 (ns esprit.repl
   (:require
-    [goog.object :as gobj]
-    [clojure.string :as string]))
+    [clojure.string :as string]
+    [esprit.indicators :as ind]))
 
-(.write js/D22 true)
+(ind/indicate-eval false)
 
 (def connections (atom 0))
-
-(defn indicate
-  [connections]
-  (.write js/D21 (zero? connections))
-  nil)
 
 (def ^:private net (js/require "net"))
 
 (def ^:private wifi (js/require "Wifi"))
 
 (defn- write [c o]
-  ;; Turn off "eval"
-  (.write js/D22 true)
+  (ind/indicate-eval false)
   (doto c
     (.write (.stringify js/JSON o))
     (.write "\0"))
-  (js/digitalPulse js/D23 true #js [100 100]))
+  (ind/indicate-print))
 
 (defn- handle-repl-connection [c]
   (.log js/console "New REPL Connection")
-  (indicate (swap! connections inc))
+  (ind/indicate-connections (swap! connections inc))
   (.on c "close"
     (fn []
       (.log js/console "REPL disconnected")
-      (indicate (swap! connections dec))))
+      (ind/indicate-connections (swap! connections dec))))
   (let [buffer (atom "")]
     (.on c "data"
       (fn [data]
@@ -41,8 +35,7 @@
             (cond
               (string/starts-with? data "(function (){try{return cljs.core.pr_str")
               (let [response (try
-                               ;; Indicate "eval"
-                               (js/analogWrite js/D22, 0.2 #js {:freq 2})
+                               (ind/indicate-eval true)
                                #js {:status "success"
                                     :value  (js/eval data)}
                                (catch :default ex
@@ -70,7 +63,7 @@
 
 (defn- start-server [port]
   (.log js/console "Ready for REPL Connections")
-  (indicate 0)
+  (ind/indicate-connections 0)
   (prompt-dns-sd)
   (ensure-cljs-user)
   (.listen server port))
@@ -82,9 +75,9 @@
 
 (if (seq wifi-ssid)
   (do
-    (js/analogWrite js/D21, 0.5 #js {:freq 120})
+    (ind/indicate-joining-wifi)
     (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
-  (js/analogWrite js/D21, 0.5 #js {:freq 2}))
+  (ind/indicate-no-wifi-creds))
 
 ;; workaround a bug where last form doesn't seem to be evaluated
 (def ^:private dummy 3)

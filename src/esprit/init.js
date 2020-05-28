@@ -1,1 +1,1 @@
-analogWrite(D22, 0.2, {freq: 1});
+analogWrite(D33, 0.2, {freq: 1});
