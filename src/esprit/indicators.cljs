@@ -2,6 +2,7 @@
 
 (def ^:private print-led js/D32)
 (def ^:private eval-led js/D33)
+(def ^:private read-led js/D14)
 (def ^:private conn-led js/D13)
 
 (defn- pwm [led on-duty-cycle freq]
@@ -29,6 +30,9 @@
 
 (defn indicate-no-wifi-creds []
   (pwm conn-led 0.5 2))
+
+(defn indicate-read []
+  (js/digitalPulse read-led true #js [100 100]))
 
 (defn indicate-print []
   (js/digitalPulse print-led true #js [100 100]))

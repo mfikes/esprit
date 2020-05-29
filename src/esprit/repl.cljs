@@ -28,6 +28,7 @@
   (let [buffer (atom "")]
     (.on c "data"
       (fn [data]
+        (ind/indicate-read)
         (if-not (string/ends-with? data "\0")
           (swap! buffer str data)
           (let [data (str @buffer data)]
