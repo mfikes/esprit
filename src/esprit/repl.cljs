@@ -54,9 +54,9 @@
 
 (def ^:private server (.createServer net handle-repl-connection))
 
-(defn- prompt-dns-sd []
-  (.log js/console "Ensure this ESP32's REPL is being advertised via MDNS. For example, on macOS:")
-  (.log js/console "dns-sd -P \"Esprit ESP32 WROVER\" _http._tcp local 53001 esprit.local" (.. wifi getIP -ip)))
+(defn- display-connect-info []
+  (.log js/console "Establish an Esprit REPL by executing")
+  (.log js/console (str "clj -m cljs.main -re esprit -ro '{:endpoint-address \"" (.. wifi getIP -ip) "\"}' -r")))
 
 (defn ensure-cljs-user []
   (when-not (exists? js/cljs.user)
@@ -65,7 +65,7 @@
 (defn- start-server [port]
   (.log js/console "Ready for REPL Connections")
   (ind/indicate-connections 0)
-  (prompt-dns-sd)
+  (display-connect-info)
   (ensure-cljs-user)
   (.listen server port))
 
