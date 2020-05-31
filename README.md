@@ -1,5 +1,5 @@
 # Esprit
-This repository contains work in progress for support for ClojureScript on the ESP32 WROVER using Espruino.
+This repository contains support for ClojureScript on the ESP32 WROVER using Espruino.
 
 ## Prerequisite
 Set up an ESP32 WROVER with partitions and expanded JSVar space (below modeled per [this gist][1]).
