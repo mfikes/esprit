@@ -59,6 +59,6 @@ To compile your own code for use on the ESP32, you can use `:optimizations` `:ad
 If you want to instead have a ROM with your code where you can establish a REPL, instead use `:optimizations` `:simple` and somewhere in your source tree, require the `esprit.repl` namespace.
 
 [1]:	https://gist.github.com/mfikes/5ed90e461229161ba9197461af888107
-[2]:	http://planck-repl.org/releases/ESP32-REPL-1/bootloader.bin
-[3]:	http://planck-repl.org/releases/ESP32-REPL-1/partitions_espruino.bin
-[4]:	http://planck-repl.org/releases/ESP32-REPL-1/espruino_esp32.bin
+[2]:	http://planck-repl.org/releases/ESP32-REPL-2/bootloader.bin
+[3]:	http://planck-repl.org/releases/ESP32-REPL-2/partitions_espruino.bin
+[4]:	http://planck-repl.org/releases/ESP32-REPL-2/espruino_esp32.bin
