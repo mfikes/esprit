@@ -1,8 +1,9 @@
 # Esprit
 This repository contains support for ClojureScript on the ESP32 WROVER using Espruino.
 
-## Prerequisite
-Set up an ESP32 WROVER with partitions and expanded JSVar space (below modeled per [this gist][1]).
+## Prerequisites
+
+Set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][1]).
 
 Note that schematics and other artifacts for a customized ESP32 WROVER board are available in the [esprit-board](https://github.com/mfikes/esprit-board) repository, but any ESP32 WROVER with 8 MiB of PSIRAM will work.
 
@@ -18,14 +19,15 @@ Download bootloader, partitions, and Espruino engine:
 
 Then flash via
 
-	esptool.py --port /dev/cu.SLAB\_USBtoUART --baud 2000000 write\_flash 0x1000 bootloader.bin 0x8000 partitions\_espruino.bin 0x10000 espruino\_esp32.bin
+	esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x1000 bootloader.bin 0x8000 partitions_espruino.bin 0x10000 espruino\_esp32.bin
+	
 ## REPL
 
 Make a REPL, baking the WiFi info into it:
 
         clj -m cljs.main -co co-repl.edn -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"}}' -c esprit.repl
 
-(Normally we'd just have the Espruino persist the WiFi info via its existing capability to do so, but this is currently not reliable with this particular modified build, while baking it in as illustrated above works every time.)
+> Normally we'd just have the Espruino persist the WiFi info via its existing capability to do so, but this is currently not reliable with this particular modified build, while baking it in as illustrated above works every time.
 
 Then make a ROM binary from the compiled ClojureScript using
 
