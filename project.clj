@@ -1,4 +1,4 @@
-(defproject esprit "0.2.0"
+(defproject esprit "0.3.0"
   :description "ClojureScript on the ESP32 using Espruino"
   :url "https://github.com/mfikes/esprit"
   :license {:name "Eclipse Public License"
