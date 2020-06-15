@@ -29,7 +29,7 @@ Then flash via
 
 Make a REPL, baking the WiFi info into it:
 
-	clj -m cljs.main -co '{:optimizations :simple :target :none :browser-repl false :process-shim false :closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"}}' -c esprit.repl
+	clj -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c esprit.repl
 
 > Normally we'd just have the Espruino persist the WiFi info via its existing capability to do so, but this is currently not reliable with this particular modified build, while baking it in as illustrated above works every time.
 
