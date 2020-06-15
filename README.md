@@ -28,7 +28,7 @@ Then flash via
 	{:deps {org.clojure/clojurescript {:mvn/version "1.10.597"}
 	        esprit {:mvn/version "0.4.0"}}}
 
-Make a REPL, baking the WiFi info into it:
+Make a REPL, baking WiFi credentials into it (change `MySSID` and `MyWiFiPassword`):
 
 	clj -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c esprit.repl
 
