@@ -5,7 +5,7 @@ This repository contains support for ClojureScript on the ESP32 WROVER using Esp
 
 Set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][1]).
 
-Note that schematics and other artifacts for a customized ESP32 WROVER board are available in the [esprit-board](https://github.com/mfikes/esprit-board) repository, but any ESP32 WROVER with 8 MiB of PSIRAM will work.
+Note that schematics and other artifacts for a customized ESP32 WROVER board are available in the [esprit-board][2] repository, but any ESP32 WROVER with 8 MiB of PSIRAM will work.
 
 We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`.
 
@@ -13,25 +13,25 @@ We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`.
 
 Download bootloader, partitions, and Espruino engine:
 
-- [`bootloader.bin`][2]
-- [`partitions_espruino.bin`][3]
-- [`espruino_esp32.bin`][4]	
+- [`bootloader.bin`][3]
+- [`partitions_espruino.bin`][4]
+- [`espruino_esp32.bin`][5]	
 
 Then flash via
 
-	esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x1000 bootloader.bin 0x8000 partitions_espruino.bin 0x10000 espruino\_esp32.bin
-	
+	esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x1000 bootloader.bin 0x8000 partitions_espruino.bin 0x10000 espruino_esp32.bin
+
 ## REPL
 
 Make a REPL, baking the WiFi info into it:
 
-        clj -m cljs.main -co co-repl.edn -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"}}' -c esprit.repl
+	    clj -m cljs.main -co co-repl.edn -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"}}' -c esprit.repl
 
 > Normally we'd just have the Espruino persist the WiFi info via its existing capability to do so, but this is currently not reliable with this particular modified build, while baking it in as illustrated above works every time.
 
 Then make a ROM binary from the compiled ClojureScript using
 
-	clj -A:make-rom
+	clj -m esprit.make-rom
 
 You can then flash this ROM to your ESP32 via
 
@@ -60,6 +60,7 @@ To compile your own code for use on the ESP32, you can use `:optimizations` `:ad
 If you want to instead have a ROM with your code where you can establish a REPL, instead use `:optimizations` `:simple` and somewhere in your source tree, require the `esprit.repl` namespace.
 
 [1]:	https://gist.github.com/mfikes/5ed90e461229161ba9197461af888107
-[2]:	http://planck-repl.org/releases/ESP32-REPL-2/bootloader.bin
-[3]:	http://planck-repl.org/releases/ESP32-REPL-2/partitions_espruino.bin
-[4]:	http://planck-repl.org/releases/ESP32-REPL-2/espruino_esp32.bin
+[2]:	https://github.com/mfikes/esprit-board
+[3]:	http://planck-repl.org/releases/ESP32-REPL-2/bootloader.bin
+[4]:	http://planck-repl.org/releases/ESP32-REPL-2/partitions_espruino.bin
+[5]:	http://planck-repl.org/releases/ESP32-REPL-2/espruino_esp32.bin
