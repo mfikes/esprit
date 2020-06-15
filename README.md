@@ -25,7 +25,7 @@ Then flash via
 
 `deps.edn`:
 
-	esprit {:mvn/version "0.2.0"}
+	{:deps {esprit {:mvn/version "0.2.0"}}}
 
 Make a REPL, baking the WiFi info into it:
 
