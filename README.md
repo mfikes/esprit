@@ -26,7 +26,7 @@ Then flash via
 `deps.edn`:
 
 	{:deps {org.clojure/clojurescript {:mvn/version "1.10.597"}
-	        esprit {:mvn/version "0.3.0"}}}
+	        esprit {:mvn/version "0.4.0"}}}
 
 Make a REPL, baking the WiFi info into it:
 
