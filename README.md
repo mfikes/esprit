@@ -22,7 +22,8 @@ Then flash via
 	esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x1000 bootloader.bin 0x8000 partitions_espruino.bin 0x10000 espruino_esp32.bin
 
 ## REPL
-
+`deps.edn`:
+	esprit {:mvn/version "0.1.0"}
 Make a REPL, baking the WiFi info into it:
 
 	    clj -m cljs.main -co co-repl.edn -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"}}' -c esprit.repl
