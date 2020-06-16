@@ -7,7 +7,7 @@ Set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built f
 
 Note that schematics and other artifacts for a customized ESP32 WROVER board are available in the [esprit-board][2] repository, but any ESP32 WROVER with 8 MiB of PSIRAM will work.
 
-We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`.
+We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`. (This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][6] if they are not already installed on your computer.)
 
 	esptool.py --port /dev/cu.SLAB_USBtoUART erase_flash
 
@@ -67,3 +67,4 @@ If you want to instead have a ROM with your code where you can establish a REPL,
 [3]:	http://planck-repl.org/releases/ESP32-REPL-2/bootloader.bin
 [4]:	http://planck-repl.org/releases/ESP32-REPL-2/partitions_espruino.bin
 [5]:	http://planck-repl.org/releases/ESP32-REPL-2/espruino_esp32.bin
+[6]:	https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
