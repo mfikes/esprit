@@ -9,7 +9,7 @@ Ensure you have Espressif's `esptool.py` tool available (for flashing ESP32s). T
 
 In this section, we will set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][1]).
 
-We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`. (This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][6] if they are not already installed on your computer.)
+We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`. (_This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][6] if they are not already installed on your computer._)
 
 	esptool.py --port /dev/cu.SLAB_USBtoUART erase_flash
 
@@ -50,9 +50,9 @@ To establish a REPL into the ESP32, we need to first learn its IP address. We ca
 
 Hit return to get a prompt and press the reset button on the device. 
 
-It can take about 15 seconds to load the ClojureScript runtime. (The Esprit board will flash its EVAL LED while this is occcuring.) 
+It can take about 15 seconds to load the ClojureScript runtime. (_The Esprit board will flash its EVAL LED while this is occcuring._) 
 
-Then the code will attempt to join the WiFi. (The Esprit board will dimly light the CONN LED while this is occuring, and once connected it will switch to doing short pulses.)
+Then the code will attempt to join the WiFi. (_The Esprit board will dimly light the CONN LED while this is occuring, and once connected it will switch to doing short pulses._)
 
 Once the device is connected to WiFi, it will print a message like the following to the serial port like:
 
