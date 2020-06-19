@@ -60,7 +60,7 @@ Once the device is connected to WiFi, it will print a message like the following
 	Establish an Esprit REPL by executing
 	clj -m cljs.main -co '{:def-emits-var false}' -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
 
-Copy this command, and then exit your terminal session (in screen this is done via `Ctrl-a`, `k`, `y`), and then issue the copied command to start the REPL.
+Copy this command, and then exit your terminal session (in `screen` this is done via `Ctrl-a`, `k`, `y`), and then issue the copied command to start the REPL.
 
 ### Other Stuff
 
