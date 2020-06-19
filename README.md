@@ -48,8 +48,12 @@ To establish a REPL into the ESP32, we need to first learn its IP address. We ca
 
 	screen /dev/cu.SLAB_USBtoUART 115200
 
-Hit return to get a prompt and press the reset button on the device. It can take about 15 seconds to load the ClojureScript runtime) and configure the device to your WiFi network:
-  
+Hit return to get a prompt and press the reset button on the device. 
+
+It can take about 15 seconds to load the ClojureScript runtime. (The Esprit board will flash its EVAL LED while this is occcuring.) 
+
+Then the code will attempt to join the WiFi. (The Esprit board will dimly light the CONN LED while this is occuring, and once connected it will switch to doing short pulses.)
+
 Once the device is connected to WiFi, it will print a message like the following to the serial port like:
 
 	Ready for REPL Connections
