@@ -3,6 +3,8 @@ This repository contains support for ClojureScript on the ESP32 WROVER using Esp
 
 ## Prerequisites
 
+Ensure you have Espressif's `esptool.py` tool available (for flashing ESP32s). This can be obtained at https://github.com/espressif/esptool
+
 Set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][1]).
 
 Note that schematics and other artifacts for a customized ESP32 WROVER board are available in the [esprit-board][2] repository, but any ESP32 WROVER with 8 MiB of PSIRAM will work.
