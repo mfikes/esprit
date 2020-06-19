@@ -52,7 +52,7 @@ Hit return to get a prompt and press the reset button on the device.
 
 It can take about 15 seconds to load the ClojureScript runtime. (_The Esprit board will flash its EVAL LED while this is occcuring._) 
 
-Then the code will attempt to join the WiFi. (_The Esprit board will dimly light the CONN LED while this is occuring, and once connected it will switch to doing short pulses._)
+Then the code will attempt to join the WiFi. (_The Esprit board will dimly light the CONN LED while this is occuring, and once connected to WiFi it will switch to doing short pulses until a REPL connection is established._)
 
 Once the device is connected to WiFi, it will print a message like the following to the serial port like:
 
