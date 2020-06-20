@@ -1,6 +1,8 @@
 # Esprit
 This repository contains support for ClojureScript on the ESP32 WROVER using Espruino.
 
+> If you have any questions about this stuff, be sure to check out the `#esprit` [Clojurians Slack](http://clojurians.net) channel.
+
 ## Prerequisites
 
 > Schematics and other artifacts for a customized ESP32 WROVER board are available in the [esprit-board][2] repository, but any ESP32 WROVER with 8 MiB of PSIRAM will work.
