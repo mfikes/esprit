@@ -1,7 +1,7 @@
 # Esprit
 This repository contains support for ClojureScript on the ESP32 WROVER using Espruino.
 
-> If you have any questions about this stuff, be sure to check out the `#esprit` [Clojurians Slack](http://clojurians.net) channel.
+If you have any questions about this stuff, be sure to check out the `#esprit` [Clojurians Slack](http://clojurians.net) channel.
 
 ## Prerequisites
 
