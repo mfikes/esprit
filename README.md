@@ -1,7 +1,7 @@
 # Esprit
 This repository contains support for ClojureScript on the ESP32 WROVER using Espruino.
 
-If you have any questions about this stuff, be sure to check out the `#esprit` [Clojurians Slack](http://clojurians.net) channel.
+If you have any questions about this stuff, be sure to check out the `#esprit` [Clojurians Slack][1] channel.
 
 ## Prerequisites
 
@@ -9,17 +9,17 @@ If you have any questions about this stuff, be sure to check out the `#esprit` [
 
 Ensure you have Espressif's `esptool.py` tool available (for flashing ESP32s). This can be obtained at https://github.com/espressif/esptool
 
-In this section, we will set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][1]).
+In this section, we will set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][3]).
 
-We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`. (_This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][6] if they are not already installed on your computer._)
+We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`. (_This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][4] if they are not already installed on your computer._)
 
 	esptool.py --port /dev/cu.SLAB_USBtoUART erase_flash
 
 Download bootloader, partitions, and Espruino engine:
 
-- [`bootloader.bin`][3]
-- [`partitions_espruino.bin`][4]
-- [`espruino_esp32.bin`][5]	
+- [`bootloader.bin`][5]
+- [`partitions_espruino.bin`][6]
+- [`espruino_esp32.bin`][7]	
 
 Then flash via
 
@@ -60,7 +60,7 @@ Once the device is connected to WiFi, it will print a message like the following
 
 	Ready for REPL Connections
 	Establish an Esprit REPL by executing
-	clj -m cljs.main -co '{:def-emits-var false}' -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
+	clj -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
 
 Copy this command, and then exit your terminal session (in `screen` this is done via `Ctrl-a`, `k`, `y`), and then issue the copied command to start the REPL.
 
@@ -70,9 +70,10 @@ To compile your own code for use on the ESP32, you can use `:optimizations` `:ad
 
 If you want to instead have a ROM with your code where you can establish a REPL, instead use `:optimizations` `:simple` and somewhere in your source tree, require the `esprit.repl` namespace.
 
-[1]:	https://gist.github.com/mfikes/5ed90e461229161ba9197461af888107
+[1]:	http://clojurians.net
 [2]:	https://github.com/mfikes/esprit-board
-[3]:	http://planck-repl.org/releases/ESP32-REPL-2/bootloader.bin
-[4]:	http://planck-repl.org/releases/ESP32-REPL-2/partitions_espruino.bin
-[5]:	http://planck-repl.org/releases/ESP32-REPL-2/espruino_esp32.bin
-[6]:	https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
+[3]:	https://gist.github.com/mfikes/5ed90e461229161ba9197461af888107
+[4]:	https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
+[5]:	http://planck-repl.org/releases/ESP32-REPL-2/bootloader.bin
+[6]:	http://planck-repl.org/releases/ESP32-REPL-2/partitions_espruino.bin
+[7]:	http://planck-repl.org/releases/ESP32-REPL-2/espruino_esp32.bin
