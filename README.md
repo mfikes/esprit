@@ -64,6 +64,10 @@ Once the device is connected to WiFi, it will print a message like the following
 
 Copy this command, and then exit your terminal session (in `screen` this is done via `Ctrl-a`, `k`, `y`), and then issue the copied command to start the REPL.
 
+### Known issues
+
+See https://github.com/mfikes/esprit/issues for known issues.
+
 ### Other Stuff
 
 To compile your own code for use on the ESP32, you can use `:optimizations` `:advanced` in your project and then make a ROM for it by executing the `esprit.make-rom` main.
