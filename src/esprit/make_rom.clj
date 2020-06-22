@@ -6,6 +6,7 @@
 (defn -main []
   (let [main-js    (-> (str (slurp (io/resource "esprit/init.js")) (slurp "out/main.js"))
                      (string/replace "a: {" "{")
+                     (string/replace "a:for" "for")
                      (string/replace "goog.uri.utils.splitRe_=/^(?:([^:/?#.]+):)?(?:\\/\\/(?:([^/?#]*)@)?([^/#?]*?)(?::([0-9]+))?(?=[/#?]|$))?([^?#]+)?(?:\\?([^#]*))?(?:#([\\s\\S]*))?$/" "goog.uri.utils.splitRe_=null")
                      (string/replace "= /^(?:([^:/?#.]+):)?(?:\\/\\/(?:([^/?#]*)@)?([^/#?]*?)(?::([0-9]+))?(?=[/#?]|$))?([^?#]+)?(?:\\?([^#]*))?(?:#([\\s\\S]*))?$/" "= null")
                      #_(string/replace "of(" "of2(")
