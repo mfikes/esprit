@@ -11,7 +11,7 @@ Ensure you have Espressif's `esptool.py` tool available (for flashing ESP32s). T
 
 In this section, we will set up an ESP32 WROVER with partitions and expanded JSVar space (the pre-built files below are modeled per [this gist][3]).
 
-We are assuming that the device is connected on port `/dev/cu.SLAB_USBtoUART`. (_This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][4] if they are not already installed on your computer._)
+We are assuming that the device is plugged in to your machine via USB and connected on port `/dev/cu.SLAB_USBtoUART`. (_This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers][4] if they are not already installed on your computer._)
 
 	esptool.py --port /dev/cu.SLAB_USBtoUART erase_flash
 
@@ -63,6 +63,10 @@ Once the device is connected to WiFi, it will print a message like the following
 	clj -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
 
 Copy this command, and then exit your terminal session (in `screen` this is done via `Ctrl-a`, `k`, `y`), and then issue the copied command to start the REPL.
+
+### Known issues
+
+See https://github.com/mfikes/esprit/issues for known issues.
 
 ### Other Stuff
 
