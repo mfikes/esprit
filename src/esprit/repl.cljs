@@ -79,6 +79,3 @@
     (ind/indicate-joining-wifi)
     (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
   (ind/indicate-no-wifi-creds))
-
-;; workaround a bug where last form doesn't seem to be evaluated
-(def ^:private dummy 3)
