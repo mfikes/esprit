@@ -32,7 +32,7 @@ Then flash via
 `deps.edn`:
 
 	{:deps {org.clojure/clojurescript {:mvn/version "1.10.597"}
-	        esprit {:mvn/version "0.5.0"}}}
+	        esprit {:mvn/version "0.6.0"}}}
 
 Make a REPL, baking WiFi credentials into it (change `MySSID` and `MyWiFiPassword`):
 
