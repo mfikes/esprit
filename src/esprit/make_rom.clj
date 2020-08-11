@@ -20,8 +20,12 @@
         size-bytes (byte-array (map #(bit-and (bit-shift-right size %) 0xff) [0 8 16 24]))]
     (with-open [os (io/output-stream "out/main.bin")]
       (.write os size-bytes)
-      (.write os (byte-array [0xff 0xff 0xff 0xff]))
       (.write os (.getBytes ".bootcde"))
+      (.write os (byte-array [0x00 0x00 0x00 0x00]))
+      (.write os (byte-array [0x00 0x00 0x00 0x00]))
+      (.write os (byte-array [0x00 0x00 0x00 0x00]))
+      (.write os (byte-array [0x00 0x00 0x00 0x00]))
+      (.write os (byte-array [0x00 0x00 0x00 0x00]))
       (.write os bytes))
     (println "ROM created; you can flash it to your ESP32 by executing the following:")
     (println "esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x2C0000 out/main.bin")))

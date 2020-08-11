@@ -18,6 +18,10 @@
     (.write "\0"))
   (ind/indicate-print))
 
+(defn fn-ify [js]
+  "Wraps bare try-catch into a fn as to properly return pr_str"
+  (str "(function(){try{return " (subs js 4 (dec (count js))) "})()"))
+
 (defn- handle-repl-connection [c]
   (.log js/console "New REPL Connection")
   (ind/indicate-connections (swap! connections inc))
@@ -42,6 +46,19 @@
                                (catch :default ex
                                  #js {:status     "exception"
                                       :value      (str ex)
+                                      :stacktrace (.-stack ex)}))]
+                (write c response))
+
+              (string/starts-with? data "try{cljs.core.pr_str.call")
+              (let [data-fn (fn-ify data)
+                    response (try
+                               (print data-fn)
+                               (ind/indicate-eval true)
+                               #js {:status "success"
+                                    :value (js/eval data-fn)}
+                               (catch :default ex
+                                 #js {:status "exception"
+                                      :value (str ex)
                                       :stacktrace (.-stack ex)}))]
                 (write c response))
 
@@ -79,6 +96,3 @@
     (ind/indicate-joining-wifi)
     (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
   (ind/indicate-no-wifi-creds))
-
-;; workaround a bug where last form doesn't seem to be evaluated
-(def ^:private dummy 3)
