@@ -1,4 +1,5 @@
-(ns esprit.indicators)
+(ns esprit.indicators
+  (:require [esprit.board]))
 
 (def ^:private print-led js/D32)
 (def ^:private eval-led js/D33)
