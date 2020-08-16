@@ -1,4 +1,7 @@
-{:deps {org.clojure/clojurescript {:mvn/version "1.10.597"}
-        com.github.rickyclarkson/jmdns {:mvn/version "3.4.2-r353-1"}}
+{:deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
+        com.github.rickyclarkson/jmdns {:mvn/version "3.4.2-r353-1"}
+        yogthos/config {:mvn/version "1.1.7"}
+        org.clojure/tools.cli {:mvn/version "1.0.194"}}
+ :paths ["src" "resources"]
  :aliases {:make-repl {:main-opts ["-m" "cljs.main" "-co" "co-repl.edn" "-c" "esprit.repl"]}
            :make-rom {:main-opts [ "-m" "esprit.make-rom"]}}}
