@@ -4,7 +4,8 @@
     [clojure.java.io :as io]
     [cljs.compiler :as comp]
     [cljs.repl :as repl]
-    [clojure.data.json :as json])
+    [clojure.data.json :as json]
+    [config.core :refer [env]])
   (:import
     (java.net Socket)
     (java.lang StringBuilder)
@@ -255,7 +256,11 @@
 (defn repl-env*
   [options]
   {:pre [(or (nil? options) (map? options))]}
-  (->EspritEnv (atom nil) (atom nil) (atom nil) (atom nil) (or options {})))
+  (->EspritEnv (atom nil) (atom nil) (atom nil) (atom nil) (into {:endpoint-address
+                                                                  (:endpoint-address env)
+                                                                  :choose-first-discovered
+                                                                  (:choose-first-discovered env)}
+                                                                 options)))
 
 (defn repl-env
   "Esprit REPL environment."

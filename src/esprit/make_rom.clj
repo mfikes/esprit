@@ -5,7 +5,6 @@
 
 (defn -main []
   (let [main-js    (-> (slurp "out/main.js")
-                       ; Random things that break
                        (string/replace "/[\\\\\"\\b\\f\\n\\r\\t]/g" "/[\\\\\"\\f\\n\\r\\t]/g")
                        (string/replace "goog.NONCE_PATTERN_=/^[\\w+/_-]+[=]{0,2}$/" "goog.NONCE_PATTERN_=null")
                        (string/replace "/^((https:)?\\/\\/[0-9a-z.:[\\]-]+\\/|\\/[^/\\\\]|[^:/\\\\%]+\\/|[^:/\\\\%]*[?#]|about:blank#)/i" "null")
@@ -29,4 +28,4 @@
       (.write os (byte-array [0x00 0x00 0x00 0x00]))
       (.write os bytes))
     (println "ROM created; you can flash it to your ESP32 by executing the following:")
-    (println "esptool.py --port /dev/cu.SLAB_USBtoUART --baud 2000000 write_flash 0x320000 out/main.bin")))
+    (println "clj -m esprit.flash -f out/main.bin")))
