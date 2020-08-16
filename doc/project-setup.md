@@ -49,7 +49,7 @@ Contributions welcome!
 ## Board Configuration
 Esprit provides a board customization mechanism that can setup various "board items". These items can be pins and peripherals. See [[esprit.board/board-item]] for the currently supported items.
 
-The board file is simply an EDN file on your classpath, and is configured in `config.edn` by the `:board-file` setting.
+The board file is simply an EDN file on your classpath, and is configured in `config.edn` by the `:board-file` setting. If this is not set, the default Esprit board pin definitions will be configured.
 
 For example, say you create a board configuration named `my-board.edn` in your classpath with the following contents:
 

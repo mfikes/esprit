@@ -1,0 +1,17 @@
+{:esprit.indicators/read-led
+ {:type :output-analog
+  :pin "D14"
+  :value 1}
+ :esprit.indicators/eval-led
+ {:type :output-analog
+  :pin "D33"
+  :value 0.2
+  :freq 1}
+ :esprit.indicators/print-led
+ {:type :output-analog
+  :pin "D32"
+  :value 1}
+ :esprit.indicators/conn-led
+ {:type :output-analog
+  :pin "D13"
+  :value 1}}

@@ -21,11 +21,7 @@
     (with-open [os (io/output-stream "out/main.bin")]
       (.write os size-bytes)
       (.write os (.getBytes ".bootcde"))
-      (.write os (byte-array [0x00 0x00 0x00 0x00]))
-      (.write os (byte-array [0x00 0x00 0x00 0x00]))
-      (.write os (byte-array [0x00 0x00 0x00 0x00]))
-      (.write os (byte-array [0x00 0x00 0x00 0x00]))
-      (.write os (byte-array [0x00 0x00 0x00 0x00]))
+      (.write os (byte-array (replicate 20 0)))
       (.write os bytes))
     (println "ROM created; you can flash it to your ESP32 by executing the following:")
     (println "clj -m esprit.flash -f out/main.bin")))
