@@ -1,7 +1,7 @@
 (ns esprit.repl
   (:require
-    [clojure.string :as string]
-    [esprit.indicators :as ind]))
+   [clojure.string :as string]
+   [esprit.indicators :as ind]))
 
 (ind/indicate-eval false)
 
@@ -18,55 +18,56 @@
     (.write "\0"))
   (ind/indicate-print))
 
-(defn fn-ify [js]
+(defn fn-ify
   "Wraps bare try-catch into a fn as to properly return pr_str"
+  [js]
   (str "(function(){try{return " (subs js 4 (dec (count js))) "})()"))
 
 (defn- handle-repl-connection [c]
   (.log js/console "New REPL Connection")
   (ind/indicate-connections (swap! connections inc))
   (.on c "close"
-    (fn []
-      (.log js/console "REPL disconnected")
-      (ind/indicate-connections (swap! connections dec))))
+       (fn []
+         (.log js/console "REPL disconnected")
+         (ind/indicate-connections (swap! connections dec))))
   (let [buffer (atom "")]
     (.on c "data"
-      (fn [data]
-        (ind/indicate-read)
-        (if-not (string/ends-with? data "\0")
-          (swap! buffer str data)
-          (let [data (str @buffer data)]
-            (reset! buffer "")
-            (cond
-              (string/starts-with? data "(function (){try{return cljs.core.pr_str")
-              (let [response (try
-                               (ind/indicate-eval true)
-                               #js {:status "success"
-                                    :value  (js/eval data)}
-                               (catch :default ex
-                                 #js {:status     "exception"
-                                      :value      (str ex)
-                                      :stacktrace (.-stack ex)}))]
-                (write c response))
+         (fn [data]
+           (ind/indicate-read)
+           (if-not (string/ends-with? data "\0")
+             (swap! buffer str data)
+             (let [data (str @buffer data)]
+               (reset! buffer "")
+               (cond
+                 (string/starts-with? data "(function (){try{return cljs.core.pr_str")
+                 (let [response (try
+                                  (ind/indicate-eval true)
+                                  #js {:status "success"
+                                       :value  (js/eval data)}
+                                  (catch :default ex
+                                    #js {:status     "exception"
+                                         :value      (str ex)
+                                         :stacktrace (.-stack ex)}))]
+                   (write c response))
 
-              (string/starts-with? data "try{cljs.core.pr_str.call")
-              (let [data-fn (fn-ify data)
-                    response (try
-                               (ind/indicate-eval true)
-                               #js {:status "success"
-                                    :value (js/eval data-fn)}
-                               (catch :default ex
-                                 #js {:status "exception"
-                                      :value (str ex)
-                                      :stacktrace (.-stack ex)}))]
-                (write c response))
+                 (string/starts-with? data "try{cljs.core.pr_str.call")
+                 (let [data-fn (fn-ify data)
+                       response (try
+                                  (ind/indicate-eval true)
+                                  #js {:status "success"
+                                       :value (js/eval data-fn)}
+                                  (catch :default ex
+                                    #js {:status "exception"
+                                         :value (str ex)
+                                         :stacktrace (.-stack ex)}))]
+                   (write c response))
 
-              (= data ":cljs/quit")
-              (.end c)
+                 (= data ":cljs/quit")
+                 (.end c)
 
-              :else
-              (write c #js {:status "success"
-                            :value  "true"}))))))))
+                 :else
+                 (write c #js {:status "success"
+                               :value  "true"}))))))))
 
 (def ^:private server (.createServer net handle-repl-connection))
 

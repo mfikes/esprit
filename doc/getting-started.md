@@ -24,6 +24,7 @@ Build a js file, containing the Esprit REPL, baking WiFi credentials into it (ch
 clj -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c esprit.repl
 ```
 > Normally we'd just have the Espruino persist the WiFi info via its existing capability to do so, but this is currently not reliable with this particular modified build, while baking it in as illustrated above works every time.
+
 Then make a ROM binary from the compiled ClojureScript using
 ```sh
 clj -m esprit.make-rom
