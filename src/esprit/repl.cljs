@@ -52,7 +52,6 @@
               (string/starts-with? data "try{cljs.core.pr_str.call")
               (let [data-fn (fn-ify data)
                     response (try
-                               (print data-fn)
                                (ind/indicate-eval true)
                                #js {:status "success"
                                     :value (js/eval data-fn)}

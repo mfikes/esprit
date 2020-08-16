@@ -1,19 +1,22 @@
 (ns esprit.indicators
-  (:require [esprit.board]))
+  (:require [esprit.board :as board]))
 
-(def ^:private print-led js/D32)
-(def ^:private eval-led js/D33)
-(def ^:private read-led js/D14)
-(def ^:private conn-led js/D13)
+(def ^:private print-led (::print-led board/items))
+(def ^:private eval-led (::eval-led board/items))
+(def ^:private read-led (::read-led board/items))
+(def ^:private conn-led (::conn-led board/items))
 
 (defn- pwm [led on-duty-cycle freq]
-  (js/analogWrite led (- 1 on-duty-cycle) #js {:freq freq}))
+  (when led
+    (js/analogWrite led (- 1 on-duty-cycle) #js {:freq freq})))
 
 (defn- turn-off [led]
-  (.write led true))
+  (when led
+    (.write led true)))
 
 (defn- turn-on [led]
-  (.write led false))
+  (when led
+    (.write led false)))
 
 (defn indicate-eval [eval?]
   (if eval?
@@ -33,7 +36,9 @@
   (pwm conn-led 0.5 2))
 
 (defn indicate-read []
-  (js/digitalPulse read-led true #js [100 100]))
+  (when read-led
+    (js/digitalPulse read-led true #js [100 100])))
 
 (defn indicate-print []
-  (js/digitalPulse print-led true #js [100 100]))
+  (when print-led
+    (js/digitalPulse print-led true #js [100 100])))
