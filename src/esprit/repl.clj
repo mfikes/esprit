@@ -1,17 +1,19 @@
 (ns esprit.repl
   (:require
-    [clojure.string :as string]
-    [clojure.java.io :as io]
-    [cljs.compiler :as comp]
-    [cljs.repl :as repl]
-    [clojure.data.json :as json]
-    [config.core :refer [env]])
+   [clojure.java.io :as io]
+   [cljs.compiler :as comp]
+   [cljs.repl :as repl]
+   [clojure.data.json :as json]
+   [config.core :refer [env]]
+   [clojure.string :as str])
   (:import
-    (java.net Socket)
-    (java.lang StringBuilder)
-    (java.io BufferedReader BufferedWriter IOException)
-    (javax.jmdns JmDNS ServiceListener)
-    (java.net URI)))
+   (java.net Socket)
+   (java.lang StringBuilder)
+   (java.io BufferedReader BufferedWriter IOException)
+   (javax.jmdns JmDNS ServiceListener)
+   (java.net URI)))
+
+(def argument-global "arguments2462148dcdc") ; Random so we don't get a name collision
 
 (defn set-logging-level [logger-name level]
   "Sets the logging level for a logger to a level."
@@ -134,10 +136,29 @@
   {:pre [(map? s)]}
   (.close (:socket s)))
 
+(defn fn-ify
+  "Wraps bare try-catch into a fn as to properly return pr_str"
+  [js]
+  (str "(function (){try{return " (subs js 4 (dec (count js))) "}})()"))
+
+(defn str-replace-js
+  "Performs str replacements to fix various espruino bugs we find"
+  [js]
+  (-> js
+      (str/replace "arguments" (str "[" argument-global "=arguments," argument-global "][1]"))))
+
+(defn process
+  "Process outgoing JS to make compatible with Espruino"
+  [js]
+  (if (str/starts-with? js "try{cljs.core.pr_str.call")
+    (do
+      (str-replace-js (fn-ify js)))
+    (str-replace-js js)))
+
 (defn write
   [out js]
   (:pre [(instance? BufferedWriter out) (string? js)])
-  (.write out js)
+  (.write out (process js))
   (.write out (int 0)) ;; terminator
   (.flush out))
 
