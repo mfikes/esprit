@@ -1,6 +1,7 @@
 (ns esprit.flash
   (:require [clojure.java.io :as io]
-            [clojure.tools.cli :refer [parse-opts]])
+            [clojure.tools.cli :refer [parse-opts]]
+            [config.core :refer [env]])
   (:import [java.io File]
            [java.lang ProcessBuilder]))
 
@@ -19,14 +20,18 @@
 (defn erase
   "Erase entire ESP32 flash"
   ([]
-   (run-and-print "esptool.py" "erase_flash"))
+   (if-let [port (:serial-port env)]
+     (erase port)
+     (run-and-print "esptool.py" "erase_flash")))
   ([port]
    (run-and-print "esptool.py" "--port" port "erase_flash")))
 
 (defn flash
   "Flash `bin` to the `addr` location"
   ([bin addr]
-   (run-and-print "esptool.py" "--baud" "2000000" "write_flash" (str addr) bin))
+   (if-let [port (:serial-port env)]
+     (flash bin addr port)
+     (run-and-print "esptool.py" "--baud" "2000000" "write_flash" (str addr) bin)))
   ([bin addr port]
    (run-and-print "esptool.py" "--baud" "2000000" "--port" port "write_flash" (str addr) bin)))
 
@@ -41,9 +46,11 @@
 (defn bootstrap
   "Flash the Espruino core, partition table, and bootloader to the ESP32"
   ([]
-   (doseq [[file addr] memory-layout
-           :when (not (= file "main.bin"))]
-     (flash (str (resource-to-tmp file)) addr)))
+   (if-let [port (:serial-port env)]
+     (bootstrap port)
+     (doseq [[file addr] memory-layout
+             :when (not (= file "main.bin"))]
+       (flash (str (resource-to-tmp file)) addr))))
   ([port]
    (doseq [[file addr] memory-layout
            :when (not (= file "main.bin"))]

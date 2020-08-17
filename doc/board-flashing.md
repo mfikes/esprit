@@ -4,7 +4,7 @@ To flash binaries to your board, you will need a copy of [esptool](https://githu
 Additionally, as the ESP32 does not have native USB, you may need to install drivers for the USB to UART adapter that is on your board. For the Esprit board, you will need the Silicon Labs CP2102N [drivers](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers).
 
 ## esprit.flash
-Esprit provides a wrapper for esptool to give some convenient utilities to flashing esprit-specific binaries. The flags are given in each section below, and can also be shown via the command-line `-h` or `--help` argument to `clj -m esprit.flash`. All of the `esprit.flash` commands take an optional `-p` or `--port` option to specify the the upload port, but esptool can usually find the correct port without it. 
+Esprit provides a wrapper for esptool to give some convenient utilities to flashing esprit-specific binaries. The flags are given in each section below, and can also be shown via the command-line `-h` or `--help` argument to `clj -m esprit.flash`. All of the `esprit.flash` commands take an optional `-p` or `--port` option to specify the upload port, but esptool can usually find the correct port without it. At the project level, the port can be defined with the `:serial-port` config option in `config.edn` on the classpath.
 
 ## Erasing
 Given an ESP32 in an unknown state, it may be a good idea to completely erase the flash to start from a clean slate, this can be done with:
