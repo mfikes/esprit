@@ -29,7 +29,7 @@
 (defn flash
   "Flash `bin` to the `addr` location"
   ([bin addr]
-   (if-let [port (:serial env)]
+   (if-let [port (:serial-port env)]
      (flash bin addr port)
      (run-and-print "esptool.py" "--baud" "2000000" "write_flash" (str addr) bin)))
   ([bin addr port]
@@ -46,15 +46,15 @@
 (defn bootstrap
   "Flash the Espruino core, partition table, and bootloader to the ESP32"
   ([]
-   (if-let [port (:serial env)]
+   (if-let [port (:serial-port env)]
      (bootstrap port)
      (doseq [[file addr] memory-layout
              :when (not (= file "main.bin"))]
-      (flash (str (resource-to-tmp file)) addr)))
-   ([port]
-    (doseq [[file addr] memory-layout
-            :when (not (= file "main.bin"))]
-      (flash (str (resource-to-tmp file)) addr port)))))
+       (flash (str (resource-to-tmp file)) addr))))
+  ([port]
+   (doseq [[file addr] memory-layout
+           :when (not (= file "main.bin"))]
+     (flash (str (resource-to-tmp file)) addr port))))
 
 (def cli-options
   ;; An option with a required argument

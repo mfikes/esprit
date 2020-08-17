@@ -6,5 +6,5 @@
 (defmacro read-board-file []
   (list 'quote (edn/read-string (slurp (io/resource (or (:board-file env)
                                                         (do (binding [*out* *err*]
-                                                              (println "NOTE: Defaulting to default Esprit board config"))
+                                                              (println "NOTE: Defaulting to Esprit board config"))
                                                           "esprit-esp32-board.edn")))))))
