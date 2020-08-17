@@ -14,14 +14,20 @@
 (defn- write [c o]
   (ind/indicate-eval false)
   (doto c
-    (.write (.stringify js/JSON o))
-    (.write "\0"))
+     (.write (.stringify js/JSON o))
+     (.write "\0"))
   (ind/indicate-print))
 
-(defn fn-ify
-  "Wraps bare try-catch into a fn as to properly return pr_str"
-  [js]
-  (str "(function(){try{return " (subs js 4 (dec (count js))) "})()"))
+(defn eval-data [data]
+  (println data)
+  (try
+    (ind/indicate-eval true)
+    #js {:status "success"
+         :value  (js/eval data)}
+    (catch :default ex
+      #js {:status "exception"
+           :value (str ex)
+           :stacktrace (.-stack ex)})))
 
 (defn- handle-repl-connection [c]
   (.log js/console "New REPL Connection")
@@ -40,27 +46,7 @@
                (reset! buffer "")
                (cond
                  (string/starts-with? data "(function (){try{return cljs.core.pr_str")
-                 (let [response (try
-                                  (ind/indicate-eval true)
-                                  #js {:status "success"
-                                       :value  (js/eval data)}
-                                  (catch :default ex
-                                    #js {:status     "exception"
-                                         :value      (str ex)
-                                         :stacktrace (.-stack ex)}))]
-                   (write c response))
-
-                 (string/starts-with? data "try{cljs.core.pr_str.call")
-                 (let [data-fn (fn-ify data)
-                       response (try
-                                  (ind/indicate-eval true)
-                                  #js {:status "success"
-                                       :value (js/eval data-fn)}
-                                  (catch :default ex
-                                    #js {:status "exception"
-                                         :value (str ex)
-                                         :stacktrace (.-stack ex)}))]
-                   (write c response))
+                 (write c (eval-data data))
 
                  (= data ":cljs/quit")
                  (.end c)

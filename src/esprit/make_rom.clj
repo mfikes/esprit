@@ -3,8 +3,11 @@
    [clojure.java.io :as io]
    [clojure.string :as string]))
 
+(def argument-global "arguments2462148dcdc") ; Random so we don't get a name collision https://xkcd.com/221/
+
 (defn -main []
   (let [main-js    (-> (slurp "out/main.js")
+                       (string/replace "arguments" (str "[" argument-global "=arguments," argument-global "][1]"))
                        (string/replace "/[\\\\\"\\b\\f\\n\\r\\t]/g" "/[\\\\\"\\f\\n\\r\\t]/g")
                        (string/replace "goog.NONCE_PATTERN_=/^[\\w+/_-]+[=]{0,2}$/" "goog.NONCE_PATTERN_=null")
                        (string/replace "/^((https:)?\\/\\/[0-9a-z.:[\\]-]+\\/|\\/[^/\\\\]|[^:/\\\\%]+\\/|[^:/\\\\%]*[?#]|about:blank#)/i" "null")
