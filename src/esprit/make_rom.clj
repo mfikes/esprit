@@ -5,7 +5,6 @@
 
 (defn -main []
   (let [main-js    (-> (slurp "out/main.js")
-                       (string/replace "/[\\\\\"\\b\\f\\n\\r\\t]/g" "/[\\\\\"\\f\\n\\r\\t]/g")
                        (string/replace "goog.NONCE_PATTERN_=/^[\\w+/_-]+[=]{0,2}$/" "goog.NONCE_PATTERN_=null")
                        (string/replace "/^((https:)?\\/\\/[0-9a-z.:[\\]-]+\\/|\\/[^/\\\\]|[^:/\\\\%]+\\/|[^:/\\\\%]*[?#]|about:blank#)/i" "null")
                        (string/replace "/^(?:(?:https?|mailto|ftp):|[^:/?#]*(?:[/?#]|$))/i" "null")
