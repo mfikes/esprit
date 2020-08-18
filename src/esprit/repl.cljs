@@ -19,7 +19,6 @@
   (ind/indicate-print))
 
 (defn eval-data [data]
-  (println data)
   (try
     (ind/indicate-eval true)
     #js {:status "success"
