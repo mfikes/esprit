@@ -12,6 +12,8 @@ To run Esprit, you will need an ESP32. However, not every ESP32 is created equal
 
 All of the interaction with the board itself is done with Espressif's [esptool.py](https://github.com/espressif/esptool). Make sure this is installed, and on your path before proceeding.
 
+We are assuming that the device is plugged in to your machine via USB and connected on port `/dev/cu.SLAB_USBtoUART`. (_This will be the case if you are using the Esprit board, and in that case you will need the Silicon Labs CP2102N USB to UART chip [drivers](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) if they are not already installed on your computer. On Linux devices, it may mount on `/dev/ttyUSB0`. You can have esptool search for the port by running: `esptool.py chip_id`_)
+
 ## I haz board, how REPL?
 Alright hot shot, wanna jump in head first?
 Create a `deps.edn` file with ClojureScript and Esprit
