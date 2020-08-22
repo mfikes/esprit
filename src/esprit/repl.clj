@@ -13,8 +13,6 @@
    (javax.jmdns JmDNS ServiceListener)
    (java.net URI)))
 
-(def argument-global "arguments2462148dcdc") ; Random so we don't get a name collision
-
 (defn set-logging-level [logger-name level]
   "Sets the logging level for a logger to a level."
   {:pre [(string? logger-name) (instance? java.util.logging.Level level)]}
@@ -141,19 +139,12 @@
   [js]
   (str "(function (){try{return " (subs js 4 (dec (count js))) "}})()"))
 
-(defn str-replace-js
-  "Performs str replacements to fix various espruino bugs we find"
-  [js]
-  (-> js
-      (str/replace "arguments" (str "[" argument-global "=arguments," argument-global "][1]"))))
-
 (defn process
   "Process outgoing JS to make compatible with Espruino"
   [js]
   (if (str/starts-with? js "try{cljs.core.pr_str.call")
-    (do
-      (str-replace-js (fn-ify js)))
-    (str-replace-js js)))
+    (fn-ify js)
+    js))
 
 (defn write
   [out js]
