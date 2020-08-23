@@ -30,10 +30,22 @@
                 (.mode "analog")))
     :input-pullup (let [{pin-name :pin} item]
                     (doto (js/Pin pin-name)
-                      (.mode "input-pullup")))
+                      (.mode "input_pullup")))
     :input-pulldown (let [{pin-name :pin} item]
                       (doto (js/Pin pin-name)
-                        (.mode "input-pulldown")))
+                        (.mode "input_pulldown")))
+    :opendrain (let [{pin-name :pin} item]
+                 (let [pin (js/Pin pin-name)]
+                   (.mode pin "opendrain")
+                   (when-let [val (:value item)]
+                     (.write pin val))
+                   pin))
+    :opendrain-pullup (let [{pin-name :pin} item]
+                        (let [pin (js/Pin pin-name)]
+                          (.mode pin "opendrain_pullup")
+                          (when-let [val (:value item)]
+                            (.write pin val))
+                          pin))
     ; Peripherals
     :serial (let [{baud :baud} item]
               (doto js/Serial2
