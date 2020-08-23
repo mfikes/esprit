@@ -1,7 +1,7 @@
 # Building and Board Flashing
 
-To flash binaries to your board, you will need a copy of [esptool](https://github.com/espressif/esptool)
-Additionally, as the ESP32 does not have native USB, you may need to install drivers for the USB to UART adapter that is on your board. For the Esprit board, you will need the Silicon Labs CP2102N [drivers](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers).
+To flash binaries to your board, you will need a copy of [esptool][1]
+Additionally, as the ESP32 does not have native USB, you may need to install drivers for the USB to UART adapter that is on your board. For the Esprit board, you will need the Silicon Labs CP2102N [drivers][2].
 
 ## esprit.flash
 Esprit provides a wrapper for esptool to give some convenient utilities to flashing esprit-specific binaries. The flags are given in each section below, and can also be shown via the command-line `-h` or `--help` argument to `clj -m esprit.flash`. All of the `esprit.flash` commands take an optional `-p` or `--port` option to specify the upload port, but esptool can usually find the correct port without it. At the project level, the port can be defined with the `:serial-port` config option in `config.edn` on the classpath.
@@ -18,7 +18,7 @@ clj -m esprit.flash --erase
 
 ## Bootstraping
 The Esprit project is built atop the Espruino JS interpreter, and as such, Espruino must be uploaded to the ESP32 first. This phase of flashing "bootstraping" is only needed once, unless of course the underlying Espruino version gets updated. The bootstrap payload consists of `bootloader.bin`, `partitions_espruino.bin`, and `espruino_esp32.bin`.
-To learn more how these were built, read [this-gist](https://gist.github.com/kiranshila/9f7ff8a538f6098e642d108b62a5ede5).
+To learn more how these are built, see [Building Espruino][3].
 
 ```bash
 esptool.py --baud 2000000 write_flash /
@@ -62,3 +62,7 @@ To flash with the built in functionality, run
 ```bash
 clj -m esprit.flash --flash out/main.bin
 ```
+
+[1]:	https://github.com/espressif/esptool
+[2]:	https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
+[3]:	https://cljdoc.org/d/esprit/esprit/CURRENT/doc/building-espruino

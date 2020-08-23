@@ -46,7 +46,8 @@ But, if you want or need to build your own variant of Espruino, this page docume
 +  if(heapVars > 55000) heapVars = 55000;  //WROVER boards have much more RAM, so we set a limit
 ```
 8. Back up to `esp32/build`, and then run `. build-partition.sh` and `. build-tgz.sh`. Those should have taken care of building everything, with results symlinked in the `esp32/build/Espruino` directory.
-9. Grab the `bootloader.bin`, `espruino_esp32.bin` and `partitions_espruino.bin` from `esp32/build/Espruino` and move them to your project directory and use them as usual when flashing.
+9. Grab the `bootloader.bin`, `espruino_esp32.bin` and `partitions_espruino.bin` from `esp32/build/Espruino` and move them to your project directory and use them as usual when [flashing][3].
 
 [1]:	https://github.com/espruino/EspruinoBuildTools
 [2]:	https://github.com/espressif/esp-idf/issues/1184
+[3]:	https://cljdoc.org/d/esprit/esprit/CURRENT/doc/building-and-board-flashing
