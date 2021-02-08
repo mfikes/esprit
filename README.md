@@ -8,6 +8,9 @@ If you have any questions about this stuff, be sure to check out the `#esprit` [
 ### ClojureScript on Microcontrollers
 [![ClojureScript on Microcontrollers](http://img.youtube.com/vi/u1jr4v7dhoo/0.jpg)](http://www.youtube.com/watch?v=u1jr4v7dhoo "ClojureScript on Microcontrollers")
 
+### Contextual Electronics Podcast with Chris Gammell
+[![Contextual Electronics Podcast with Chris Gammell](http://img.youtube.com/vi/xYVsge81rmk/0.jpg)](https://www.youtube.com/watch?v=xYVsge81rmk "Contextual Electronics Podcast with Chris Gammell")
+
 ### Apropos
 [![Apropos](http://img.youtube.com/vi/J0wF92Zvq2c/0.jpg)](http://www.youtube.com/watch?v=J0wF92Zvq2c "Apropos")
 
