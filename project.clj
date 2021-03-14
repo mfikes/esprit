@@ -1,4 +1,4 @@
-(defproject esprit "0.10.0"
+(defproject esprit "1.0.0"
   :description "ClojureScript on the ESP32 using Espruino"
   :url "https://github.com/mfikes/esprit"
   :source-paths ["src" "resources"]

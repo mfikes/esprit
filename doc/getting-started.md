@@ -21,7 +21,7 @@ Alright hot shot, wanna jump in head first?
 Create a `deps.edn` file with ClojureScript and Esprit
 ```clojure
 {:deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
-        esprit/esprit {:mvn/version "0.10.0"}}}
+        esprit/esprit {:mvn/version "1.0.0"}}}
 ```
 Build a js file, containing the Esprit REPL, baking WiFi credentials into it (change `MySSID` and `MyWiFiPassword`):
 ```sh
