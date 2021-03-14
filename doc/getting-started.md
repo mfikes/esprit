@@ -71,3 +71,5 @@ clj -M -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
 ```
 
 Copy this command, and then exit your terminal session (in screen this is done via Ctrl-a, k, y), and then issue the copied command to start the REPL.
+
+At this point, the REPL connection traffic is managed via TCP over WiFi. If your board is powered by some alternate means (LiPo battery, for example), you can disconnect the USB cable and the REPL will remain live.
