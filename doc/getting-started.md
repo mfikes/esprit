@@ -49,10 +49,14 @@ Finally, flash your binary
 ```sh
 clj -M -m esprit.flash --flash out/main.bin
 ```
-Open up the ESP32's com port, say with `screen` at the default baudrate of 115200. It wouldn't be a bad idea to hit reset at this point.
+Open up the ESP32's com port, say with `screen` at the default baudrate of 115200.
+
 ```sh
 screen <your port> 115200
 ```
+
+After connecting via `screen`, it may be a good idea to reset your board in case you may have missed any messages printed during boot. (On the Esprit board, this can be done by pressing the reset button.)
+
 It can take about 15 seconds to load the ClojureScript runtime. (The Esprit board will flash its EVAL LED while this is occcuring.)
 
 Then the code will attempt to join the WiFi. (The Esprit board will dimly light the CONN LED while this is occuring, and once connected to WiFi it will switch to doing short pulses until a REPL connection is established.)
