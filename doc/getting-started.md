@@ -52,8 +52,10 @@ clj -M -m esprit.flash --flash out/main.bin
 Open up the ESP32's com port, say with `screen` at the default baudrate of 115200.
 
 ```sh
-screen <your port> 115200
+screen <your serial port> 115200
 ```
+
+In the above, insert the serial port for your board. For example, with the Esprit board, you would connect via `screen /dev/cu.SLAB_USBtoUART 115200`.
 
 After connecting via `screen`, it may be a good idea to reset your board in case you may have missed any messages printed during boot. (On the Esprit board, this can be done by pressing the reset button.)
 
