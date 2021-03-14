@@ -4,7 +4,7 @@ To flash binaries to your board, you will need a copy of [esptool][1]
 Additionally, as the ESP32 does not have native USB, you may need to install drivers for the USB to UART adapter that is on your board. For the Esprit board, you will need the Silicon Labs CP2102N [drivers][2].
 
 ## esprit.flash
-Esprit provides a wrapper for esptool to give some convenient utilities to flashing esprit-specific binaries. The flags are given in each section below, and can also be shown via the command-line `-h` or `--help` argument to `clj -m esprit.flash`. All of the `esprit.flash` commands take an optional `-p` or `--port` option to specify the upload port, but esptool can usually find the correct port without it. At the project level, the port can be defined with the `:serial-port` config option in `config.edn` on the classpath.
+Esprit provides a wrapper for esptool to give some convenient utilities to flashing esprit-specific binaries. The flags are given in each section below, and can also be shown via the command-line `-h` or `--help` argument to `clj -M -m esprit.flash`. All of the `esprit.flash` commands take an optional `-p` or `--port` option to specify the upload port, but esptool can usually find the correct port without it. At the project level, the port can be defined with the `:serial-port` config option in `config.edn` on the classpath.
 
 ## Erasing
 Given an ESP32 in an unknown state, it may be a good idea to completely erase the flash to start from a clean slate, this can be done with:
@@ -13,7 +13,7 @@ esptool.py erase_flash
 ```
 Or with the provided functionality
 ```bash
-clj -m esprit.flash --erase
+clj -M -m esprit.flash --erase
 ```
 
 ## Bootstraping
@@ -28,7 +28,7 @@ esptool.py --baud 2000000 write_flash /
 ```
 To bootstrap using the included binaries, run
 ```bash
-clj -m esprit.flash --bootstrap
+clj -M -m esprit.flash --bootstrap
 ```
 
 ## Building
@@ -46,21 +46,21 @@ If you are using the Esprit REPL, you can bake in WiFi credentials by setting th
 ```
 Using the CLI tools, this can be done by directly calling the options with
 ```bash
-clj -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c <your compile target>
+clj -M -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c <your compile target>
 ```
 Or with an EDN file on the classpath and
 ```bash
-clj -m cljs.main -co @compile-options.edn -c <your compile target>
+clj -M -m cljs.main -co @compile-options.edn -c <your compile target>
 ```
 
 ## Flashing
-Assuming some ClojureScript project has been built to `out/main.js`, a binary can be created with `clj -m esprit.make-rom`. This command will create a binary suitable for writing to the `js_code` partition in `out/main.bin`. This can be written with
+Assuming some ClojureScript project has been built to `out/main.js`, a binary can be created with `clj -M -m esprit.make-rom`. This command will create a binary suitable for writing to the `js_code` partition in `out/main.bin`. This can be written with
 ```bash
 esptool.py --baud 2000000 write_flash 0x320000 out/main.bin
 ```
 To flash with the built in functionality, run
 ```bash
-clj -m esprit.flash --flash out/main.bin
+clj -M -m esprit.flash --flash out/main.bin
 ```
 
 [1]:	https://github.com/espressif/esptool

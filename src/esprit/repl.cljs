@@ -58,7 +58,7 @@
 
 (defn- display-connect-info []
   (.log js/console "Establish an Esprit REPL by executing")
-  (.log js/console (str "clj -m cljs.main -re esprit -ro '{:endpoint-address \"" (.. wifi getIP -ip) "\"}' -r")))
+  (.log js/console (str "clj -M -m cljs.main -re esprit -ro '{:endpoint-address \"" (.. wifi getIP -ip) "\"}' -r")))
 
 (defn ensure-cljs-user []
   (when-not (exists? js/cljs.user)

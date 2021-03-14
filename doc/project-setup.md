@@ -10,12 +10,12 @@ The Esprit REPL must be explicitly included in your project to enable REPL suppo
 ### CLI Tools
 To connect to the running REPL using the Clojure CLI tools, simply run the following, replacing the endpoint address with the correct IP.
 ```bash
-clj -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
+clj -M -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
 ```
 
 Additionally, the endpoint address can be provided in a `config.edn` file in the classpath with the `:endpoint-address` setting. Then, the connection command would be
 ```bash
-clj -m cljs.main -re esprit -r
+clj -M -m cljs.main -re esprit -r
 ```
 
 ### Emacs/CIDER

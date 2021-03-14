@@ -23,4 +23,4 @@
       (.write os (byte-array (replicate 20 0)))
       (.write os bytes))
     (println "ROM created; you can flash it to your ESP32 by executing the following:")
-    (println "clj -m esprit.flash -f out/main.bin")))
+    (println "clj -M -m esprit.flash -f out/main.bin")))

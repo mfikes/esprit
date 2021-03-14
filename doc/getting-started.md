@@ -21,17 +21,17 @@ Alright hot shot, wanna jump in head first?
 Create a `deps.edn` file with ClojureScript and Esprit
 ```clojure
 {:deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
-        esprit {:mvn/version "0.10.0"}}}
+        esprit/esprit {:mvn/version "0.10.0"}}}
 ```
 Build a js file, containing the Esprit REPL, baking WiFi credentials into it (change `MySSID` and `MyWiFiPassword`):
 ```sh
-clj -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c esprit.repl
+clj -M -m cljs.main -co '{:closure-defines {esprit.repl/wifi-ssid "MySSID" esprit.repl/wifi-password "MyWiFiPassword"} :optimizations :simple :target :none :browser-repl false :process-shim false}' -c esprit.repl
 ```
 > Normally we'd just have the Espruino persist the WiFi info via its existing capability to do so, but this is currently not reliable with this particular modified build, while baking it in as illustrated above works every time.
 
 Then make a ROM binary from the compiled ClojureScript using
 ```sh
-clj -m esprit.make-rom
+clj -M -m esprit.make-rom
 ```
 Now that your binary is ready, we now have to prepare the board for upload.
 
@@ -39,15 +39,15 @@ Now that your binary is ready, we now have to prepare the board for upload.
 
 First, erase whatever is on your board
 ```sh
-clj -m esprit.flash --erase
+clj -M -m esprit.flash --erase
 ```
 Now bootstrap the Espruino runtime
 ```sh
-clj -m esprit.flash --bootstrap
+clj -M -m esprit.flash --bootstrap
 ```
 Finally, flash your binary
 ```sh
-clj -m esprit.flash --flash out/main.bin
+clj -M -m esprit.flash --flash out/main.bin
 ```
 Open up the ESP32's com port, say with `screen` at the default baudrate of 115200. It wouldn't be a bad idea to hit reset at this point.
 ```sh
@@ -61,7 +61,7 @@ Once the device is connected to WiFi, it will print a message like the following
 ```
 Ready for REPL Connections
 Establish an Esprit REPL by executing
-clj -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
+clj -M -m cljs.main -re esprit -ro '{:endpoint-address "10.0.0.1"}' -r
 ```
 
 Copy this command, and then exit your terminal session (in screen this is done via Ctrl-a, k, y), and then issue the copied command to start the REPL.
