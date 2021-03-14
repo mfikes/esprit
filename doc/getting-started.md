@@ -14,7 +14,7 @@ All of the interaction with the board itself is done with Espressif's [esptool.p
 
 We are assuming that the device is plugged in to your machine via USB.
 
-> Note:  If you are using the Esprit board, you will need the Silicon Labs CP2102N USB to UART chip [drivers](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) if they are not already installed on your computer.
+> Note:  If you are using the Esprit board, you will need the Silicon Labs CP2102N USB to UART chip [drivers](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) if they are not already installed on your computer. Also note that, even though the Esprit board might be visible to your computer via USB, it is recommended that the latest Silicon Labs drivers be installed to ensure reliable operation.
 
 ## I haz board, how REPL?
 Alright hot shot, wanna jump in head first?
