@@ -10,7 +10,7 @@ If you haven't already, check out the [Clojure/north talk](https://youtu.be/u1jr
 ## Prerequisites
 To run Esprit, you will need an ESP32. However, not every ESP32 is created equal. Specifically, we require modules with at least 8MB of flash. The ESP32 WROVER module with 8MB of PSIRAM has been shown to work great. Additionally, you can use the purpose-built [Esprit board](https://github.com/mfikes/esprit-board), which comes pre-configured with battery management and blikenlights galore.
 
-All of the interaction with the board itself is done with Espressif's [esptool.py](https://github.com/espressif/esptool). Make sure this is installed, and on your path before proceeding.
+All of the interaction with the board itself is done with Espressif's [esptool.py](https://github.com/espressif/esptool). Make sure this is installed, and on your path before proceeding. (If using Homebrew, you can do `brew install esptool`.)
 
 We are assuming that the device is plugged in to your machine via USB.
 
