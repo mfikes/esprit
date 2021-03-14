@@ -41,7 +41,7 @@ An example `.dir-locals.el` would then be setup as
   (cider-print-fn . pr)))
 ```
 
-Esprit's REPL environment's endpoint address can be set in `config.edn` with the `:endpoint-address** setting. The IP of the running Esprit instance is displayed upon successful connection to WiFi.
+Esprit's REPL environment's endpoint address can be set in `config.edn` with the `:endpoint-address` setting. The IP of the running Esprit instance is displayed upon successful connection to WiFi.
 
 ### Other Editors
 Contributions welcome!
