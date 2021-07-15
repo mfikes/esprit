@@ -1,5 +1,0 @@
-{:cljdoc.doc/tree [["Readme" {:file "README.md"}]
-                   ["Getting Started" {:file "doc/getting-started.md"}]
-                   ["Project Setup" {:file "doc/project-setup.md"}]
-                   ["Building and Board Flashing" {:file "doc/board-flashing.md"}]
-                   ["Building Espruino" {:file "doc/building-espruino.md"}]]}
